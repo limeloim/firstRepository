@@ -13,7 +13,6 @@ public class problem2 {
                 sum += i;
             }
         }
-
         System.out.println(String.format("Ответ %s", sum));
     }
 }
