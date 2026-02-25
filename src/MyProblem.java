@@ -2,13 +2,15 @@ import java.time.LocalDate; // разделить на операции функ
 import java.util.Scanner;
 
 public class MyProblem {
+
     public static void main(String[] args) {
+
         Manager manager = new Manager();
         Scanner scanner = new Scanner(System.in);
         Monkey[] monkeys = new Monkey[2];
         while (true) {
             if (isFull(monkeys)) {
-                monkeys = adSpace(monkeys);
+                monkeys = addSpace(monkeys);
             }
             for (int i = 0; i < monkeys.length; i++) {
                 if (monkeys[i] == null) {
@@ -32,7 +34,7 @@ public class MyProblem {
                     manager.update(monkeys, scanner);
                     break;
                 case "d":
-                    manager.deleate(monkeys, scanner);
+                    manager.delete(monkeys, scanner);
                     break;
             }
         }
@@ -44,7 +46,7 @@ public class MyProblem {
         return true; // все места заняты
     }
 
-    public static Monkey[] adSpace(Monkey[] monkeys) {
+    public static Monkey[] addSpace(Monkey[] monkeys) {
         Monkey[] newArray = new Monkey[monkeys.length * 2];
         for (int i = 0; i < monkeys.length; i++) {
             newArray[i] = monkeys[i];
@@ -72,19 +74,19 @@ class Manager {
          }
      }
 
-
-    public void read(Monkey[] monkeys,Scanner scanner) {
+    public void read(Monkey[] monkeys, Scanner scanner) {
         System.out.println("Введите номер обезьяны");
         int i = scanner.nextInt() - 1;
         scanner.nextLine();
         if (monkeys[i] == null) {
             System.out.println("Нет");
         } else {
-            System.out.println(monkeys[i].getAllFilds());
+            System.out.println(monkeys[i]);
         }
     }
 
     public void update(Monkey[] monkeys,Scanner scanner) {
+
         System.out.println("Введите номер Для редактирования");
         int j = scanner.nextInt() - 1;
         scanner.nextLine();
@@ -101,7 +103,7 @@ class Manager {
                 int age = scanner.nextInt();
                 monkeys[j].setAge(age);
                 break;
-            case "c": case "с":
+            case "c":
                 System.out.println("Введите новое время прибытия: yyyy [ENTER] mm [ENTER] dd [ENTER]");
                 int yyyy = scanner.nextInt();
                 int mm = scanner.nextInt();
@@ -110,7 +112,7 @@ class Manager {
                 break;
         }
     }
-    public void deleate(Monkey[] monkeys,Scanner scanner) {
+    public void delete(Monkey[] monkeys,Scanner scanner) {
         System.out.println("Выберите номер для удаления");
         int k = scanner.nextInt() - 1;
         scanner.nextLine();
@@ -141,11 +143,6 @@ class Monkey {
         dateOfArrival = LocalDate.now();
     }
 
-    public String getAllFilds(){
-        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ]", this.age, this.name, this.dateOfArrival);
-
-    }
-
     void setName(String name) {
         this.name = name;
     }
@@ -158,7 +155,7 @@ class Monkey {
         this.dateOfArrival = LocalDate.of(yyyy, mm, dd);
     }
 
-    public String toString (){
+    public String toString(){
         return String.format ("[ Возраст:%d Имя:%s Дата прибытия:%s ]", this.age, this.name, this.dateOfArrival); // переделать
     }
 }
