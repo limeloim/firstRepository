@@ -255,4 +255,5 @@ class Cat extends SuperClass{
 
     public void carCare() {
     }
+
 }
