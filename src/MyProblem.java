@@ -58,9 +58,9 @@ public class MyProblem {
 
 public static boolean isFull(SuperClass[] animals) {
     for (SuperClass m : animals) {
-        if (m == null) return false; // есть свободное место
+        if (m == null) return false;
     }
-    return true; // все места заняты
+    return true;
 }
 
 public static SuperClass[] adSpace(SuperClass[] animals) {
