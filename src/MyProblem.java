@@ -7,22 +7,17 @@ interface Feedable {
 }
 interface Accessable {
 
-    void openAccess();
-    void closeAccess();
+    public void openAccess();
+    public void closeAccess();
 }
 
 interface AbleToCastration {
     public void receiveCastration();
 }
 
-interface OpenAccessExtension {
-    public void receiveExtension();
-}
-
 public class MyProblem {
 
     public static void main(String[] args) {
-     
     Manager manager = new Manager();
     Scanner scanner = new Scanner(System.in);
     ArrayList<Animal> animals = new ArrayList<>(2);
@@ -57,7 +52,7 @@ public class MyProblem {
                     manager.delete(animals, scanner);
                     break;
                 case "e":
-                    Animal.autoCare(animals);
+                    Manager.autoCare(animals);
                     break;
             }
         }
@@ -148,6 +143,14 @@ class Manager {
         }
     }
 
+    public static void autoCare(ArrayList<Animal> animals) {
+        for (Animal animal : animals) {
+            if (animal != null) {
+                animal.carCare();
+            }
+        }
+    }
+
     public void delete(ArrayList<Animal> animals, Scanner scanner) {
         System.out.println("Выберите номер для удаления");
         int k = scanner.nextInt() - 1;
@@ -155,6 +158,7 @@ class Manager {
         animals.set(k, null);
     }
 }
+
     
 class Animal {
 
@@ -221,14 +225,6 @@ class Animal {
         this.dateOfArrival = LocalDate.of(yyyy, mm, dd);
     }
 
-    public static void autoCare(ArrayList<Animal> animals) {
-        for (Animal animal : animals) {
-            if (animal != null) {
-                animal.carCare();
-            }
-        }
-    }
-
     public void carCare() {
 
     }
@@ -246,7 +242,7 @@ class Monkey extends Animal{
     }
 }
 
-class Lion extends Animal implements OpenAccessExtension {
+class Lion extends Animal implements Accessable {
 
     private boolean isIll;
 
@@ -268,6 +264,14 @@ class Lion extends Animal implements OpenAccessExtension {
         return isIll;
     }
 
+    public void openAccess(){
+        //TODO: открыть доступ льву
+    }
+
+    public void closeAccess(){
+        //TODO: закрыть доступ льву
+    }
+
     @Override
     public String toString() {
         return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Болеет:%s Деньрождения:%s]", this.age, this.name, this.dateOfArrival, this.id, this.isIll, this.dateOfBirth);
@@ -287,13 +291,12 @@ class Lion extends Animal implements OpenAccessExtension {
         this.dateOfBirth = LocalDate.of(year, month, day);
     }
 
+    @Override
     public void carCare() {
-        receiveExtension();
+        openAccess();
+        closeAccess();
     }
 
-    public void receiveExtension(){
-        //TODO: открыть доступ льву
-    }
 
     public boolean isIll() {
         return isIll;
@@ -326,6 +329,7 @@ class Penguin extends Animal implements AbleToCastration, Feedable {
 
     }
 
+    @Override
     public void carCare() {
         receiveCastration();
         receiveFeed();
@@ -334,6 +338,7 @@ class Penguin extends Animal implements AbleToCastration, Feedable {
     public void receiveCastration(){
         //TODO: автоматизировать кострацию
     }
+
     public void receiveFeed(){
         //TODO: автоматизировать корм
     }
@@ -345,6 +350,7 @@ class Cat extends Animal{
         super(name, age);
     }
 
+    @Override
     public void carCare() {
     }
 
