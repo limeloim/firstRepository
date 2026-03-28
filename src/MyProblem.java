@@ -18,23 +18,23 @@ interface AbleToCastration {
 public class MyProblem {
 
     public static void main(String[] args) {
-    Manager manager = new Manager();
-    Scanner scanner = new Scanner(System.in);
-    ArrayList<Animal> animals = new ArrayList<>(2);
+        Manager manager = new Manager();
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Animal> animals = new ArrayList<>(2);
 
-    while (true) {
+        while (true) {
 
-        if (animals.isEmpty()) {
-            System.out.println("[Список пуст]");
-        } else {
-            for (Animal exactAnimal : animals) {
-                if (exactAnimal != null) {
-                    System.out.print(" [ " + exactAnimal.toString() + " ] ");
-                } else {
-                    System.out.print(" [ пусто ] ");
+            if (animals.isEmpty()) {
+                System.out.println("[Список пуст]");
+            } else {
+                for (Animal exactAnimal : animals) {
+                    if (exactAnimal != null) {
+                        System.out.print(" [ " + exactAnimal.toString() + " ] ");
+                    } else {
+                        System.out.print(" [ пусто ] ");
+                    }
                 }
             }
-        }
             System.out.println();
             System.out.println("Введите команду: a = Create, b = Read, c = Update, d = Delete, e = Вызвать автоуход");
             String command2 = scanner.nextLine();
@@ -264,10 +264,12 @@ class Lion extends Animal implements Accessable {
         return isIll;
     }
 
+    @Override
     public void openAccess(){
         //TODO: открыть доступ льву
     }
 
+    @Override
     public void closeAccess(){
         //TODO: закрыть доступ льву
     }
@@ -335,10 +337,12 @@ class Penguin extends Animal implements AbleToCastration, Feedable {
         receiveFeed();
     }
 
+    @Override
     public void receiveCastration(){
         //TODO: автоматизировать кострацию
     }
 
+    @Override
     public void receiveFeed(){
         //TODO: автоматизировать корм
     }
