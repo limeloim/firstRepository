@@ -1,6 +1,19 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+
+class InvalidInputDataException extends RuntimeException {
+
+}
+
+enum AnimalType {
+    predator, herbivore, omnivorous;
+}
 
 interface Feedable {
     public void receiveFeed();
@@ -29,31 +42,44 @@ public class MyProblem {
             } else {
                 for (Animal exactAnimal : animals) {
                     if (exactAnimal != null) {
-                        System.out.print(" [ " + exactAnimal.toString() + " ] ");
+                        System.out.print(" [ " + exactAnimal.toStringWrite() + " ] ");
                     } else {
                         System.out.print(" [ пусто ] ");
                     }
                 }
             }
             System.out.println();
-            System.out.println("Введите команду: a = Create, b = Read, c = Update, d = Delete, e = Вызвать автоуход");
-            String command2 = scanner.nextLine();
-            switch (command2) {
-                case "a":
-                    manager.create(animals, scanner);
-                    break;
-                case "b":
-                    manager.read(animals, scanner);
-                    break;
-                case "c":
-                    manager.update(animals, scanner);
-                    break;
-                case "d":
-                    manager.delete(animals, scanner);
-                    break;
-                case "e":
-                    Manager.autoCare(animals);
-                    break;
+            System.out.println("Введите команду: a = Create, b = Read, c = Update, d = Delete, e = Вызвать автоуход, f = Создать файл");
+
+                String command2 = scanner.nextLine();
+                try {
+                    if (!Arrays.asList("a", "b", "c", "d", "e", "f").contains(command2)) {
+                        throw new InvalidInputDataException();
+                    }
+                } catch (InvalidInputDataException e) {
+                    System.out.println("Ввели некорректную команду");
+                    continue;
+                }
+
+                switch (command2) {
+                    case "a":
+                        manager.create(animals, scanner);
+                        break;
+                    case "b":
+                        manager.read(animals, scanner);
+                        break;
+                    case "c":
+                        manager.update(animals, scanner);
+                        break;
+                    case "d":
+                        manager.delete(animals, scanner);
+                        break;
+                    case "e":
+                        Manager.autoCare(animals);
+                        break;
+                    case "f": //можно сюда for each тут то есть массив animals  и не передовать в toSring(Animal animals) делая его не  owerride
+                        manager.writeInFile(animals); // тогд to string переопределяется у животного Что логично так как мы зписываем животных в файл
+                        break; // или можно с первым но у животного пререопределить to string и тут не каша и в menegere метод
             }
         }
     }
@@ -61,14 +87,56 @@ public class MyProblem {
 
 class Manager {
 
+    public void writeInFile(ArrayList<Animal> animals) { //должен возвращать файл
+
+        File file = new File("animals.txt"); //запишем в фай цикл который прохлодит каждый обьект и его в to string
+        for (Animal exactAnimal: animals)
+            exactAnimal.toString();
+        try {
+            file.createNewFile();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void create(ArrayList<Animal> animals, Scanner scanner) {
         System.out.println("Введите имя:");
+        //как то ограничить
         String name = scanner.nextLine();
+
+        try {
+            if (name.isBlank()) {
+                throw new InvalidInputDataException();
+            }
+        } catch (InvalidInputDataException e) {
+            System.out.println("имя не может быть пустым");
+        }
+
         System.out.println("Введите возраст:");
         int age = scanner.nextInt();
+
+        try {
+            if (age < 0 || age > 100) {
+                throw new InvalidInputDataException();
+            }
+        } catch (InvalidInputDataException e) {
+            System.out.println("Возраст должен быть от 0 до 100");
+        }
+
         scanner.nextLine();
         System.out.println("Тип животного: a = Monkey, b = Lion, c = Penguin, d = Cat");
         String command = scanner.nextLine();
+
+        try {
+            if (!Arrays.asList("a", "b", "c", "d").contains(command)) {
+                throw new InvalidInputDataException();
+            }
+        } catch (InvalidInputDataException e) {
+            System.out.println("Ввели некорректную команду");
+        }
+
         switch (command) {
             case "a":
                 animals.add(new Monkey(name, age));
@@ -100,9 +168,23 @@ class Manager {
 
         System.out.println("Введите номер животного");
         int i = scanner.nextInt() - 1;
+
+        try {
+            if (i < 0 || i > animals.size()) {
+                throw new InvalidInputDataException();
+            }
+        } catch (InvalidInputDataException e) {
+            System.out.println("Возраст должен быть от 0 до 100");
+        }
+
         scanner.nextLine();
-        System.out.println(animals.get(i).toString());
+        System.out.println(animals.get(i).toStringWrite());
     }
+
+
+
+
+
 
     public void update(ArrayList<Animal> animals,Scanner scanner) {
         System.out.println("Введите номер Для редактирования");
@@ -110,6 +192,9 @@ class Manager {
         scanner.nextLine();
         System.out.println("Введите комманду для редактирования: a = Имя, b = Возраст, c = Дата прибытия, d = Обновить болезнь");
         String command2 = scanner.nextLine();
+
+        
+
         switch (command2) {
             case "a":
                 System.out.println("Введите новое имя");
@@ -216,7 +301,17 @@ class Animal {
     }
 
     @Override
-    public String toString() {
+    public  String toString(){ //должен записывать обьект в файл
+
+        try (PrintWriter pw = new PrintWriter("animals.txt")){
+            pw.println(this.toStringWrite());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public String toStringWrite() {
         return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d]", this.age, this.name, this.dateOfArrival, this.id);
 
     }
@@ -232,7 +327,13 @@ class Animal {
 }
 
 class Monkey extends Animal{
-    
+
+    private AnimalType type = AnimalType.omnivorous;
+
+    public AnimalType getOmnivorous() {
+        return type;
+    }
+
     public Monkey(String name, int age) {
         super(name, age);
     }
@@ -240,9 +341,18 @@ class Monkey extends Animal{
     public void carCare() {
         //TODO: вызвать метод автоухода
     }
+
+    @Override
+    public String toStringWrite() {
+        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Тип:%s]", this.age, this.name, this.dateOfArrival, this.id, this.type);
+
+    }
+
 }
 
 class Lion extends Animal implements Accessable {
+
+    private AnimalType type = AnimalType.predator;
 
     private boolean isIll;
 
@@ -275,8 +385,8 @@ class Lion extends Animal implements Accessable {
     }
 
     @Override
-    public String toString() {
-        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Болеет:%s Деньрождения:%s]", this.age, this.name, this.dateOfArrival, this.id, this.isIll, this.dateOfBirth);
+    public String toStringWrite() {
+        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Болеет:%s Деньрождения:%s Тип:%s]", this.age, this.name, this.dateOfArrival, this.id, this.isIll, this.dateOfBirth, this.type);
 
     }
 
@@ -307,6 +417,10 @@ class Lion extends Animal implements Accessable {
 
 class Penguin extends Animal implements AbleToCastration, Feedable {
 
+    private AnimalType type = AnimalType.predator;
+
+    public AnimalType predator;
+
     private LocalDate dateOfBirth;
 
     public LocalDate getDateOfBirth() {
@@ -326,8 +440,8 @@ class Penguin extends Animal implements AbleToCastration, Feedable {
     }
 
     @Override
-    public String toString() {
-        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Деньрождения:%s]", this.age, this.name, this.dateOfArrival, this.id, this.dateOfBirth);
+    public String toStringWrite() {
+        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Деньрождения:%s Тип:%s]", this.age, this.name, this.dateOfArrival, this.id, this.dateOfBirth, this.type);
 
     }
 
@@ -350,6 +464,8 @@ class Penguin extends Animal implements AbleToCastration, Feedable {
 
 class Cat extends Animal{
 
+    private AnimalType type = AnimalType.predator;
+
     public Cat(String name, int age) {
         super(name, age);
     }
@@ -358,4 +474,9 @@ class Cat extends Animal{
     public void carCare() {
     }
 
+    @Override
+    public String toStringWrite() {
+        return String.format("[ Возраст:%d Имя:%s Дата прибытия:%s ID: %d Тип:%s]", this.age, this.name, this.dateOfArrival, this.id, this.type);
+
+    }
 }
